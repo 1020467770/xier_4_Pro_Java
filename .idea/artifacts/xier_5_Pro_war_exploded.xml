@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="xier_5_Pro:war exploded">
+    <output-path>$PROJECT_DIR$/out/artifacts/xier_5_Pro_war_exploded</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="xier_5_Pro/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="xier_5_Pro" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>

@@ -6,7 +6,16 @@ public class User {
 
     private String username;
     private String password;
+    private long currentContain;
     private long container;
+
+    public long getCurrentContain() {
+        return currentContain;
+    }
+
+    public void setCurrentContain(long currentContain) {
+        this.currentContain = currentContain;
+    }
 
     public User() {
     }
@@ -18,10 +27,11 @@ public class User {
         this.container = container;
     }
 
-    public User(String username, String password) {
+    public User(String username, String password, long currentContain) {
         this.username = username;
         this.password = password;
-        this.container = 20000000;
+        this.currentContain = currentContain;
+        this.container = 1024 * 1024 * 1024;
     }
 
     @Override
@@ -30,6 +40,7 @@ public class User {
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
+                ", currentContain=" + currentContain +
                 ", container=" + container +
                 '}';
     }

@@ -23,11 +23,11 @@ public class UserServiceImpl implements UserService {
     public User signUp(String spUserName, String spUserPassword) {
         User userfindInDB = userDao.findUserByUserName(spUserName);
         if (userfindInDB == null) {//只有数据库里没有该用户时才会创建新用户
-            User spUser = new User(spUserName, spUserPassword);
+            User spUser = new User(spUserName, spUserPassword, 0);
             try {
                 userDao.addUser(spUser);
                 return userDao.findUserByUserName(spUserName);
-            }catch (Exception e){
+            } catch (Exception e) {
                 return null;
             }
         } else {
@@ -46,6 +46,8 @@ public class UserServiceImpl implements UserService {
         User userByUserName = userDao.findUserByUserName(username);
         if (userByUserName != null) {
             file.setCreatorId(userByUserName.getId());
+            userByUserName.setCurrentContain(userByUserName.getCurrentContain() + file.getCapacity());
+            userDao.updateCurrentContain(userByUserName);
             fileDao.addFile(file);
         }
 

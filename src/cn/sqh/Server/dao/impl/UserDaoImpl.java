@@ -27,10 +27,10 @@ public class UserDaoImpl extends Dao implements UserDao {
 
     @Override
     public void addUser(User user) {
-        String sql = "insert into user values(null,?,?,?)";
+        String sql = "insert into user values(null,?,?,?,?)";
         System.out.println("执行到添加User了");
         String abstractPassword = MD5.MD5Encode(user.getPassword(), "utf-8");
-        template.update(sql, user.getUsername(), abstractPassword, user.getContainer());
+        template.update(sql, user.getUsername(), abstractPassword, user.getContainer(), user.getCurrentContain());
     }
 
     @Override
@@ -44,6 +44,16 @@ public class UserDaoImpl extends Dao implements UserDao {
             e.printStackTrace();
             System.out.println("没有找到User，返回null");
             return null;
+        }
+    }
+
+    @Override
+    public void updateCurrentContain(User userByUserName) {
+        try {
+            String sql = "update user set current_contain = ? where id = ? ";
+            template.update(sql, userByUserName.getCurrentContain(), userByUserName.getId());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

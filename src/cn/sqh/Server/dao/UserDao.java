@@ -9,4 +9,6 @@ public interface UserDao {
     void addUser(User user);
 
     User findUserByUserName(String spUserName);
+
+    void updateCurrentContain(User userByUserName);
 }

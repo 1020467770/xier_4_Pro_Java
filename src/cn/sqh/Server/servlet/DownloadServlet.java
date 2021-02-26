@@ -1,5 +1,7 @@
 package cn.sqh.Server.servlet;
 
+import cn.sqh.Server.util.Logging;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -15,21 +17,25 @@ public class DownloadServlet extends HttpServlet {//可以下载任意类型的�
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String fileName = request.getParameter("fileName");
-        System.out.println(fileName);
-        ServletContext servletContext = this.getServletContext();
-        String filePath = servletContext.getRealPath("/files/" + fileName);
-        System.out.println(filePath);
+        try {
+            String fileName = request.getParameter("fileName");
+            System.out.println(fileName);
+            ServletContext servletContext = this.getServletContext();
+            String filePath = servletContext.getRealPath("/files/" + fileName);
+            System.out.println(filePath);
 
-        FileInputStream fis = new FileInputStream(filePath);
-        ServletOutputStream sos = response.getOutputStream();
-        byte[] bytes = new byte[1024 * 8];
-        int len = 0;
-        while ((len = fis.read(bytes))!= -1){
-            sos.write(bytes,0,len);
+            FileInputStream fis = new FileInputStream(filePath);
+            ServletOutputStream sos = response.getOutputStream();
+            byte[] bytes = new byte[1024 * 8];
+            int len = 0;
+            while ((len = fis.read(bytes)) != -1) {
+                sos.write(bytes, 0, len);
+            }
+
+            fis.close();
+        } catch (Exception e) {
+            Logging.logger.error(e);
         }
-
-        fis.close();
 
     }
 

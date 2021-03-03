@@ -28,6 +28,10 @@ public class LoginServlet extends javax.servlet.http.HttpServlet {
                 user = JSONObject.parseObject(line, User.class);
             }
             System.out.println(user);
+            if (user == null) {
+                response.setStatus(401);
+                return;
+            }
             UserService service = new UserServiceImpl();
             User loginUser = service.login(user);
             if (loginUser != null) {

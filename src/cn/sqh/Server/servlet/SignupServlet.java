@@ -22,6 +22,10 @@ public class SignupServlet extends javax.servlet.http.HttpServlet {
             request.setCharacterEncoding("utf-8");
             String spUserName = request.getParameter("username");
             String spUserPassword = request.getParameter("password");
+            if (spUserName == null || spUserPassword == null) {
+                response.setStatus(401);
+                return;
+            }
             System.out.println("进入注册Servlet了");
             System.out.println(spUserName);
             System.out.println(spUserPassword);

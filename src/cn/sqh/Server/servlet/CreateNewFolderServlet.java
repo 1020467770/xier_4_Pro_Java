@@ -22,6 +22,10 @@ public class CreateNewFolderServlet extends HttpServlet {
             String folderName = request.getParameter("folderName");
             String creatorUsername = request.getParameter("creatorUsername");
             String parentFolderId = request.getParameter("parentFolderId");
+            if (folderName == null || creatorUsername == null || parentFolderId == null) {
+                response.setStatus(403);
+                return;
+            }
             System.out.println(creatorUsername);
             System.out.println(parentFolderId);
 

@@ -72,6 +72,15 @@ public class UserServiceImpl implements UserService {
         return (ArrayList<BasicFile>) allFilesByParentId;
     }
 
+    @Override
+    public boolean isHavaEnoughCapicity(String username) {
+        User userfindInDB = userDao.findUserByUserName(username);
+        if (userfindInDB == null || userfindInDB.getCurrentContain() >= userfindInDB.getContainer()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 
 }
 

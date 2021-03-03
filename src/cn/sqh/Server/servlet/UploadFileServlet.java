@@ -31,9 +31,12 @@ public class UploadFileServlet extends HttpServlet {//可以上传任意类型�
             String username = request.getParameter("uploader");
             String date = request.getParameter("uploadDate");
             String parentFolderId = request.getParameter("parentFolderId");
+            UserService service = new UserServiceImpl();
             Timestamp uploadDate = Timestamp.valueOf(date);
-//        System.out.println(uploadDate);
-
+            if (!service.isHavaEnoughCapicity(username)) {
+                response.setStatus(403);
+                return;
+            }
 
             Part picture = request.getPart("file");
 
@@ -53,7 +56,6 @@ public class UploadFileServlet extends HttpServlet {//可以上传任意类型�
 
             // 生成随机文件名
             String fileName = MD5.MD5Encode(UUID.randomUUID().toString(), "utf-8") + "@" + name;
-//        System.out.println(fileName);
 
             //文件存放
             String savePath = request.getServletContext()
@@ -63,11 +65,10 @@ public class UploadFileServlet extends HttpServlet {//可以上传任意类型�
                 picture.write(savePath + File.separator + fileName);
             }
 
-            UserService service = new UserServiceImpl();
-
             BasicFile file = new BasicFile(fileName, savePath, picture.getSize(), Integer.parseInt(parentFolderId), BasicFile.FILETYPE_PICTURE);
 
             service.uploadPicture(username, file);
+
         } catch (Exception e) {
             Logging.logger.error(e);
         }

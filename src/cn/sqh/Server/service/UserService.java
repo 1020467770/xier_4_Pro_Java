@@ -16,4 +16,6 @@ public interface UserService {
     void createNewFolder(String creatorUsername, BasicFile newFolder);
 
     ArrayList<BasicFile> getAllFilesByUserIdAndParentFolderId(int userId, int parentFolderId);
+
+    boolean isHavaEnoughCapicity(String username);
 }

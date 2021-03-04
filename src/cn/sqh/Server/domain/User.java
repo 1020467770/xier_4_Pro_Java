@@ -1,6 +1,8 @@
 package cn.sqh.Server.domain;
 
 
+import java.util.Objects;
+
 public class User {
     private int id;
 
@@ -15,6 +17,23 @@ public class User {
 
     public void setCurrentContain(long currentContain) {
         this.currentContain = currentContain;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {return true;}
+        if (o == null || getClass() != o.getClass()) {return false;}
+        User user = (User) o;
+        return id == user.id &&
+                currentContain == user.currentContain &&
+                container == user.container &&
+                username.equals(user.username) &&
+                password.equals(user.password);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, password, currentContain, container);
     }
 
     public User() {

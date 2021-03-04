@@ -19,6 +19,7 @@ public class SignupServlet extends javax.servlet.http.HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws javax.servlet.ServletException, IOException {
         try {
             HttpSession session = request.getSession(true);
+            String sessionId = session.getId();
             request.setCharacterEncoding("utf-8");
             String spUserName = request.getParameter("username");
             String spUserPassword = request.getParameter("password");
@@ -37,6 +38,7 @@ public class SignupServlet extends javax.servlet.http.HttpServlet {
                 session.setAttribute("user", signUpedUser); //将用户存到session
                 String respondUser = JSONObject.toJSONString(signUpedUser);
                 response.getWriter().write(respondUser);
+                response.setHeader("Set-Cookie", sessionId);
                 System.out.println("新注册的用户信息如下" + respondUser);
             }
         /*if(signUpedUser == null){
@@ -53,8 +55,6 @@ public class SignupServlet extends javax.servlet.http.HttpServlet {
         } catch (Exception e) {
             Logging.logger.error(e);
         }
-
-//        response.getWriter().write("hhh");
 
     }
 

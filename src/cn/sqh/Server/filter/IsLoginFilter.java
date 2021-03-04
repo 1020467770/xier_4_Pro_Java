@@ -7,8 +7,9 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Arrays;
 
-//@WebFilter("/*")
+@WebFilter("/*")
 public class IsLoginFilter implements Filter {
     @Override
     public void destroy() {
@@ -22,9 +23,10 @@ public class IsLoginFilter implements Filter {
             chain.doFilter(req, resp);
         } else {
             HttpSession session = request.getSession(true);
-            String requestedSessionId = request.getRequestedSessionId();
             Object user = session.getAttribute("user");
+
             System.out.println("拦截时的session=" + session);
+            System.out.println("拦截时的cookie=" + Arrays.toString(request.getCookies()));
             if (user != null) {
                 System.out.println("filter拦截到的用户信息：" + user);
                 chain.doFilter(req, resp);

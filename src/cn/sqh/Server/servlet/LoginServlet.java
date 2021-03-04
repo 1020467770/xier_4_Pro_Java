@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Enumeration;
 
 @WebServlet("/loginServlet")
 public class LoginServlet extends javax.servlet.http.HttpServlet {
@@ -19,6 +20,8 @@ public class LoginServlet extends javax.servlet.http.HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws javax.servlet.ServletException, IOException {
         try {
             HttpSession session = request.getSession(true);
+            String sessionId = session.getId();
+            System.out.println(sessionId);
             request.setCharacterEncoding("utf-8");
 
             BufferedReader br = request.getReader();
@@ -39,6 +42,7 @@ public class LoginServlet extends javax.servlet.http.HttpServlet {
                 System.out.println("登录时的sesion=" + session);
                 String respondUser = JSONObject.toJSONString(loginUser);
                 response.getWriter().write(respondUser);
+                response.setHeader("Set-Cookie", sessionId);
                 System.out.println(respondUser);
             }
 

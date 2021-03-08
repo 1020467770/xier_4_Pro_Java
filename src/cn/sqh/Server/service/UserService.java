@@ -18,4 +18,14 @@ public interface UserService {
     ArrayList<BasicFile> getAllFilesByUserIdAndParentFolderId(int userId, int parentFolderId);
 
     boolean isHavaEnoughCapicity(String username);
+
+    Boolean deleteFile(int fileId);
+
+    Boolean deleteLocalFile(int fileId);
+
+    boolean activeUser(String code);
+
+    Boolean tryChangePsw(int userId, String newPassword, int tryType);
+
+    boolean changePassword(String code);
 }

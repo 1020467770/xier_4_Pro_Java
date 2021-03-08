@@ -11,6 +11,7 @@ public class User {
     private long currentContain;
     private long container;
 
+
     public long getCurrentContain() {
         return currentContain;
     }
@@ -95,5 +96,34 @@ public class User {
     public void setContainer(long container) {
         this.container = container;
     }
+
+
+    /*private String email;//邮箱
+    private String status;//激活状态，Y代表激活，N代表未激活
+    private String code;//激活码
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }*/
 }
 

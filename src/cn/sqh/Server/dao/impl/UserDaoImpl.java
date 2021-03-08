@@ -4,6 +4,7 @@ package cn.sqh.Server.dao.impl;
 import cn.sqh.Server.dao.UserDao;
 import cn.sqh.Server.domain.User;
 import cn.sqh.Server.util.MD5;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 
 public class UserDaoImpl extends Dao implements UserDao {
@@ -55,5 +56,47 @@ public class UserDaoImpl extends Dao implements UserDao {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public User findUserByCode(String code) {
+        User user = null;
+        try {
+            String sql = "select * from user where code = ? and status = 'N' ";
+            user = template.queryForObject(sql, new BeanPropertyRowMapper<User>(User.class), code);
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
+    @Override
+    public void updateStatus(User user) {
+        String sql = "update user set status = 'Y' where id = ?";
+        template.update(sql, user.getId());
+    }
+
+    @Override
+    public User findUserById(int userId) {
+        User user = null;
+        try {
+            String sql = "select * from user where id = ?";
+            user = template.queryForObject(sql, new BeanPropertyRowMapper<User>(User.class), userId);
+        } catch (DataAccessException e) {
+            e.printStackTrace();
+        }
+        return user;
+    }
+
+    @Override
+    public void updateCode(String code, int userId) {
+        String sql = "update user set code = ? where id = ?";
+        template.update(sql, code, userId);
+    }
+
+    @Override
+    public void updatePassword(String newPassword, int id) {
+        String sql = "update user set password = ? where id = ?";
+        template.update(sql, id);
     }
 }

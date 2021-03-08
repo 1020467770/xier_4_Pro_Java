@@ -12,4 +12,8 @@ public interface FileDao {
     List<BasicFile> findAllFilesByParentId(int parentId);
 
     List<BasicFile> findAllFilesByUserIdAndParentId(int userId, int parentFolderId);
+
+    BasicFile findOneFileById(int fileId);
+
+    Boolean deleteFile(int fileId);
 }

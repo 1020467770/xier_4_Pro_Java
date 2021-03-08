@@ -8,17 +8,21 @@ import cn.sqh.Server.util.Logging;
 import cn.sqh.Server.util.MD5;
 import com.alibaba.fastjson.JSONObject;
 
+import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -35,10 +39,11 @@ public class UserServlet extends BaseServlet {
     /**
      * 功能；用户注册
      * 调用路径：/user/register
+     *
      * @param request
      * @param response
      */
-    public void register(HttpServletRequest request, HttpServletResponse response){
+    public void register(HttpServletRequest request, HttpServletResponse response) {
         try {
             HttpSession session = request.getSession(true);
             String sessionId = session.getId();
@@ -64,6 +69,7 @@ public class UserServlet extends BaseServlet {
     /**
      * 功能：用户登录
      * 调用路径：/user/login
+     *
      * @param request
      * @param response
      */
@@ -100,6 +106,7 @@ public class UserServlet extends BaseServlet {
     /**
      * 功能：用户创建新文件夹
      * 调用路径：/user/createNewFolder
+     *
      * @param request
      * @param response
      */
@@ -126,6 +133,7 @@ public class UserServlet extends BaseServlet {
     /**
      * 功能：从网盘下载文件
      * 调用路径：/user/downloadFile
+     *
      * @param request
      * @param response
      */
@@ -149,7 +157,6 @@ public class UserServlet extends BaseServlet {
             while ((len = fis.read(bytes)) != -1) {
                 sos.write(bytes, 0, len);
             }
-
         } catch (Exception e) {
             Logging.logger.error(e);
         } finally {
@@ -165,6 +172,7 @@ public class UserServlet extends BaseServlet {
     /**
      * 功能：向网盘上传文件
      * 调用路径：/user/uploadFile
+     *
      * @param request
      * @param response
      */
@@ -215,6 +223,7 @@ public class UserServlet extends BaseServlet {
     /**
      * 功能：获取本页所有文件以及文件夹
      * 调用路径：/user/getFilesByParentId
+     *
      * @param request
      * @param response
      */
@@ -231,6 +240,151 @@ public class UserServlet extends BaseServlet {
             }
             response.setCharacterEncoding("utf-8");
             response.getWriter().write(s);
+        } catch (Exception e) {
+            Logging.logger.error(e);
+        }
+    }
+
+    /**
+     * 功能：删除单个文件或文件夹
+     * 调用路径：/user/deleteFile
+     *
+     * @param request
+     * @param response
+     */
+    public void deleteFile(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            int fileId = Integer.parseInt(request.getParameter("fileId"));
+//            service.deleteFile(fileId);这个会删除数据库的数据
+            service.deleteLocalFile(fileId);
+        } catch (Exception e) {
+            Logging.logger.error(e);
+        }
+    }
+
+    /**
+     * 功能：一次删除多个文件或文件夹
+     * 调用路径：/user/deleteFile
+     *
+     * @param request
+     * @param response
+     */
+    public void deleteFiles(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            //id分别为1,2,3,4,50,13123
+            String fileIds = request.getParameter("fileIds");
+            String[] strings = fileIds.split(",");
+//            service.deleteFile(fileId);
+            if (strings != null) {
+                for (String string : strings) {
+                    service.deleteLocalFile(Integer.parseInt(string));//仅删除本地图片
+                }
+            }
+        } catch (Exception e) {
+            Logging.logger.error(e);
+        }
+    }
+
+    /**
+     * 功能：获取验证码图片
+     * 调用路径：/user/getVerifyPic
+     *
+     * @param request
+     * @param response
+     */
+    public void getVerifyPic(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            int width = 80;
+            int height = 30;
+            BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+            Graphics g = image.getGraphics();
+            g.setColor(Color.GRAY);
+            g.fillRect(0, 0, width, height);
+            String base = "0123456789ABCDEFGabcdefg";
+            int size = base.length();
+            Random r = new Random();
+            StringBuffer sb = new StringBuffer();
+            for (int i = 1; i <= 4; i++) {
+                int index = r.nextInt(size);
+                char c = base.charAt(index);
+                sb.append(c);
+            }
+            String checkCode = sb.toString();
+            request.getSession().setAttribute("CHECKCODE_SERVER", checkCode);
+            g.setColor(Color.YELLOW);
+            g.setFont(new Font("黑体", Font.BOLD, 24));
+            g.drawString(checkCode, 15, 25);
+            ImageIO.write(image, "PNG", response.getOutputStream());
+        } catch (Exception e) {
+            Logging.logger.error(e);
+        }
+    }
+
+    /**
+     * 功能：客户端申请找回密码
+     * 请求url：/user/tryChangePassword
+     *
+     * @param request
+     * @param response
+     */
+    public void tryChangePassword(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            int userId = Integer.parseInt(request.getParameter("userId"));
+            String newPassword = request.getParameter("newPassword");
+            int tryType = Integer.parseInt(request.getParameter("tryType"));
+            service.tryChangePsw(userId, newPassword, tryType);
+        } catch (Exception e) {
+            Logging.logger.error(e);
+        }
+    }
+
+    /**
+     * 功能：邮箱验证超链接跳转找回密码
+     * 请求url：/user/changePasswordByEmail
+     *
+     * @param request
+     * @param response
+     */
+    public void changePasswordByEmail(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            String code = request.getParameter("code");//更改密码所需的激活码
+            if (code != null) {
+                boolean flag = service.changePassword(code);
+                String msg = null;
+                if (flag) {
+                    msg = "激活成功";
+                } else {
+                    msg = "激活失败，请联系管理员";
+                }
+                response.setContentType("text/html;charset=utf-8");
+                response.getWriter().write(msg);
+            }
+        } catch (Exception e) {
+            Logging.logger.error(e);
+        }
+    }
+
+    /**
+     * 通过邮箱激活用户功能
+     * 请求url：/user/activeByEmail
+     *
+     * @param request
+     * @param response
+     */
+    public void activeByEmail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            String code = request.getParameter("code");
+            if (code != null) {
+                boolean flag = service.activeUser(code);
+                String msg = null;
+                if (flag) {
+                    msg = "激活成功";
+                } else {
+                    msg = "激活失败，请联系管理员";
+                }
+                response.setContentType("text/html;charset=utf-8");
+                response.getWriter().write(msg);
+            }
         } catch (Exception e) {
             Logging.logger.error(e);
         }
